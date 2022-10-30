@@ -1,0 +1,76 @@
+#debug-window
+{
+	position: absolute;
+	top : 0;
+	left : 0;
+	transition: left 0.3s ease-in-out;
+	font-size: 0.8rem;
+
+	.window-full
+	{		
+		height: 100vh;
+		background-color: rgba( 0, 0, 0, 0.3 );
+		box-shadow: rgba(0,0,0, 0.2) 0px 8px 24px;
+		color : white;
+		cursor: default;
+
+		.panel
+		{
+			width: 400px;
+
+			margin-bottom: 1.5rem;
+
+			.label
+			{
+				font-size: 1rem;
+				margin-bottom: 0.5rem;
+			}
+
+			.card
+			{
+				background-color: rgba( 0, 0, 0, 0.22 );
+				padding: 0.5rem;
+				margin-bottom: 0.5rem;
+			}
+
+			.collapse-horizontal
+			{
+				overflow-x: hidden;
+			}
+		}
+
+		.border
+		{
+			border: 1px solid rgba( 255, 255, 255, 0.25 ) !important;
+
+			&-bottom
+			{
+				border-bottom: 1px solid rgba( 255, 255, 255, 0.25 ) !important;
+			}
+
+			&-start
+			{
+				border-left: 1px solid rgba( 255, 255, 255, 0.25 ) !important;
+			}
+
+			&-top
+			{
+				border-top: 1px solid rgba( 255, 255, 255, 0.25 ) !important;
+			}
+		}
+	}
+
+	.window-minimized
+	{
+		background-color: rgba( 0, 0, 0, 0.3 );
+		.card
+		{
+			min-width: 225px;
+			background-color: transparent;
+			border: none;
+			color: white;
+		}
+	}
+}
+
+@import './entityEditorPanel';
