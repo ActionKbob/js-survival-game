@@ -5,7 +5,7 @@ import { addEntity, removeEntity } from "@store/slices/entities";
 
 const WebSockets = () => {
 
-	const { endpoint, readyState, networkEntity } = useSelector( ( state ) => state.websocket );
+	const { endpoint, readyState, networkEID, clientId } = useSelector( ( state ) => state.websocket );
 	const dispatch = useDispatch();
 
 	const [ tempEndpoint, setTempEndpoint ] = useState( endpoint );
@@ -31,19 +31,19 @@ const WebSockets = () => {
 	}
 
 	const handleOnDisconnect = () => {
-		dispatch( removeEntity( networkEntity ) );
+		dispatch( removeEntity( networkEID ) );
 	}
 
 	return(
 		<div className="card mb-3">
 			<div className="d-flex justify-content-between mb-2">
 				<div>
-					Ready State: <span style={ { color : readyState === 1 ? 'green' : 'red' } }>{ readyState === 1 ? 'connected' : 'disconnected' }</span>
+					Server state: <span style={ { color : readyState === 1 ? 'green' : 'red' } }>{ readyState === 1 ? 'Connected' : 'Disconnected' }</span>
 				</div>
 				{
 					readyState === 1 &&
-					networkEntity !== null &&
-					<span>EID: { networkEntity }</span>
+					networkEID !== null &&
+					<span>Entity ID: { networkEID }</span>
 				}
 			</div>
 			<div className="input-group input-group-sm">
@@ -60,6 +60,10 @@ const WebSockets = () => {
 					</>
 				}
 			</div>
+			{
+				readyState === 1 &&
+				<span className="mt-2">Client ID: { clientId }</span>
+			}
 		</div>
 	)
 }

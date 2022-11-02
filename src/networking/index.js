@@ -11,3 +11,10 @@ export const ICE_SERVER_CONFIG = {
 		},
 	]
 };
+
+export var socket = null;
+
+export const openSocket = ( endpoint ) => {
+	socket = new WebSocket( `ws://${endpoint}` );
+	return socket;
+}

@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
 	endpoint : 'localhost:6969',
 	readyState : 3,
-	networkEntity : null,
+	networkEID : null,
 	clientId : null
 }
 
@@ -13,19 +13,27 @@ const webSocketSlice = createSlice( {
 	reducers : {
 		setEndpoint : ( state, action ) => {
 			state.endpoint = action.payload;
+
+			return state;
 		},
-		setReadyState : ( state, action ) => {
-			state.readyState = action.payload;
+
+		connect : ( state, action ) => {
+			state.readyState = 1;
+			state.networkEID = action.payload.networkEID;
+			state.clientId = action.payload.clientId;
+
+			return state;
 		},
-		setNetworkEntity : ( state, action ) => {
-			state.networkEntity = action.payload;
-		},
-		setClientId : ( state, action ) => {
-			state.clientId = action.payload;
+		disconnect : ( state ) => {
+			state.readyState = 3;
+			state.networkEntity = null;
+			state.clientId = null;
+
+			return state;
 		}
 	}
 } );
 
-export const { setEndpoint, setReadyState, setNetworkEntity, setClientId } = webSocketSlice.actions;
+export const { setEndpoint, connect, disconnect } = webSocketSlice.actions;
 export default webSocketSlice.reducer;
 

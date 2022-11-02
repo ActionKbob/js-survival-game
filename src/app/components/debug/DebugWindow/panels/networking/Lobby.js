@@ -7,7 +7,7 @@ import { addEntity, removeEntity } from "@store/slices/entities";
 const Lobby = () => {
 
 	const dispatch = useDispatch();
-	const { networkEntity, clientId } = useSelector( ( state ) => state.websocket );
+	const { networkEID, clientId } = useSelector( ( state ) => state.websocket );
 	const { key, readyState, clients } = useSelector( ( state ) => state.lobby );
 	const { peers } = useSelector( ( state ) => state.peers );
 
@@ -23,9 +23,8 @@ const Lobby = () => {
 
 	const handleOnCreateOrJoin = () => {
 		batch( () => {
-			dispatch( setReadyState( 0 ) );
 			dispatch( addEntity( {
-				eid : networkEntity,
+				eid : networkEID,
 				components : [ {
 					type : 'Lobby'
 				} ]
@@ -33,13 +32,17 @@ const Lobby = () => {
 		} );
 	}
 
+	useEffect( () => { 
+		console.log( 'state change', peers, clients );
+	}, [peers] )
+
 	const handleOnLeave = () => {
-		dispatch( removeEntity( networkEntity ) );
+		dispatch( removeEntity( networkEID ) );
 	}
 
 	return(
 		<div className="card mb-3">
-			<div className="label">Lobby: {readyState}</div>
+			<div className="">Lobby state: { readyState === 1 ? 'Active' : 'Idle' }</div>
 			<hr className="mt-0" />
 			<div className="input-group input-group-sm">
 				<span className="input-group-text">Key</span>

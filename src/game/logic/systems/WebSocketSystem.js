@@ -1,10 +1,9 @@
 import { defineQuery, defineSystem, enterQuery, exitQuery, removeEntity } from "bitecs";
 import Socket from "@game/logic/components/Socket";
-import { setNetworkEntity, setReadyState, setClientId } from "@store/slices/networking/websocket";
-import { recieveMessage, answerMessage, clearAnsweredMessages, clearMessages } from "@store/slices/networking/messages";
-import { batch } from "react-redux";
+import { connect, disconnect } from "@store/slices/networking/websocket";
+import { openSocket } from '@networking';
 
-export let socket;
+let socket;
 
 export default function WebSocketSystem( scene )
 {
@@ -16,73 +15,43 @@ export default function WebSocketSystem( scene )
 
 	return defineSystem( ( world ) => {
 		
-		dispatch( clearAnsweredMessages() );
-
-		const { websocket, messages } = scene.state;
+		const { websocket } = scene.state;
 		const { endpoint } = websocket;
 		
 		// Enter entities
 		let entities = wsEnterQuery( world );
 		for( let entity of entities )
 		{
-			socket = new WebSocket( `ws://${endpoint}` );
+			// socket = new WebSocket( `ws://${endpoint}` );
+			socket = openSocket( endpoint );
 
-			socket.addEventListener( 'open', ( event ) => {
-				const { readyState } = event.target;
-				batch( () => {
-					dispatch( setReadyState( readyState ) );
-					dispatch( setNetworkEntity( entity ) );
-				} );
-			} );
+			const handleOpen = () => {
+				console.log( 'Connected to server' );
+			}
 
-			socket.addEventListener( 'message', ( event ) => {
-				const data = JSON.parse( event.data );
-				dispatch( recieveMessage( data ) );
-			} );
+			const handleMessage = ( event ) => {
+				const { type, payload } = JSON.parse( event.data );
+				
+				switch( type )
+				{
+					case 'connection_established' :
+						dispatch( connect( { networkEID : entity, clientId : payload } ) );
+						break;
+				}	
+			}
 
 			const handleClose = ( event ) => {
-				const { readyState } = event.target;
-				batch( () => {
-					dispatch( setReadyState( readyState ) );
-					dispatch( setClientId( null ) );
-					dispatch( clearMessages() );
-				} );
+				dispatch( disconnect() );
 				removeEntity( world, entity );
+				console.log( 'Disconnected from server' );
 			}
 
+			socket.addEventListener( 'open', handleOpen );
+			socket.addEventListener( 'message', handleMessage );
 			socket.addEventListener( 'close', handleClose );
-
 			socket.addEventListener( 'error', handleClose );
 		}
-
-		// This is kinda dumb. Fix it later.
-		entities = wsQuery( world );
-		for( let entity of entities )
-		{
-			if( socket.readyState === 1 )
-			{
-				for( let i = 0; i < messages.length; i++ )
-				{
-					const { id, type, payload } = messages[ i ];
-					let answered = true;
-
-					switch( type )
-					{
-						case 'connection_established' :
-							batch( () => {
-								dispatch( setClientId( payload ) );
-								dispatch( answerMessage( id ) );
-							} );
-							answered = true;
-							break;
-					}					
-					
-					if( answered )
-						dispatch( answerMessage( id ) );
-				}
-			}
-		}
-
+		
 		// Exit entities
 		entities = wsExitQuery( world );
 		for( let entity of entities )

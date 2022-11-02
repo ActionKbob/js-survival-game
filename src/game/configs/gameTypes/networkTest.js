@@ -30,7 +30,7 @@ export const networkTestConfig = {
 			},
 			{
 				name : "Entity Editor",
-				openByDefault : true,
+				openByDefault : false,
 				Component : EntityEditorPanel
 			},
 			{
