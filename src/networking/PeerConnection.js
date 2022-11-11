@@ -1,5 +1,6 @@
 import { ICE_SERVER_CONFIG } from ".";
 import { addPeer, removePeer } from "@store/slices/networking/peers";
+import { EventEmitter } from "@utilities";
 
 export default class PeerConnection
 {
@@ -12,6 +13,8 @@ export default class PeerConnection
 
 		this.remoteDesciptionSet = false;
 		this.candidate = null;
+
+		this.events = new EventEmitter();
 
 		this.connection = new RTCPeerConnection( ICE_SERVER_CONFIG );
 		this.connection.onicecandidate = this.onIceCandidate;
@@ -71,19 +74,22 @@ export default class PeerConnection
 	handleDataChannelCreation = ( channel ) => {
 		channel.onopen = () => {
 			this.dispatch( addPeer( this.peerId ) );
+			this.channel = channel;
+			this.events.emit( 'open', { peerId : this.peerId } );
+
 			console.log(`Channel Open: ${this.clientId} -> ${this.peerId}`);
 		}
 
 		channel.onmessage = ( e ) => {
-			console.log( 'message', JSON.parse(e.data).msg );
+			console.log(e)
+			const { payload } = JSON.parse( e.data );
+			this.events.emit( 'message', payload );
 		}
 
 		channel.onclose = () => {
-			this.dispatch( removePeer( this.peerId ) );
+			this.events.emit( 'close', { peerId : this.peerId } );
 			console.log(`Channel Close: ${this.clientId} -> ${this.peerId}`);
 		}
-
-		this.channel = channel;
 	}
 
 	onIceCandidate = ( event ) => {

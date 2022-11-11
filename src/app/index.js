@@ -1,11 +1,10 @@
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 import { BuildProviderTree } from '@utilities';
 import { NetworkProvider } from '@app_contexts/networking';
 
-import Layout from '@app_views/Layout';
-import SplashView from '@app_views/Splash';
+import Views from '@app_views';
 
 import store from '@store';
 
@@ -21,11 +20,7 @@ const App = () => {
 		<MemoryRouter>
 			<Provider store={ store }>
 				<ContextProviders>
-					<Routes>
-						<Route path="/" element={ <Layout /> }>
-							<Route index element={ <SplashView /> } />
-						</Route>
-					</Routes>
+					<Views />
 				</ContextProviders>
 			</Provider>
 		</MemoryRouter>
