@@ -83,7 +83,7 @@ export default function LobbySystem( scene )
 					{
 						peerConnections.get( payload.origin ).handleIceCandidate( payload );
 					}
-					break;	
+					break;
 			}
 		}
 

@@ -1,0 +1,36 @@
+// #cursor
+// 	{
+// 		position: absolute;
+// 		width: 16px;
+// 		height: 16px;
+
+// 		background-image: url( '../assets/monochrome_tilemap_transparent_packed.png' );
+// 		background-position: 160px 32px;
+// 		image-rendering: pixelated;
+// 		transform: scale(3);
+
+// 		pointer-events: none;
+
+// 		.cursor-inner
+// 		{
+// 			position: relative;
+// 			font-family: 'Silkscreen', cursive;
+// 			color: white;
+// 			font-size: 0.45rem;
+// 			left: .8rem;
+// 			top: .8rem;
+// 		}
+// 	}
+
+$sprite_size : 16px;
+
+.sprite-image
+{
+	width: $sprite_size;
+	height: $sprite_size;
+
+	background-image: url( '/assets/monochrome_tilemap_transparent_packed.png' );
+	background-position: 160px 32px;
+	image-rendering: pixelated;
+	transform: scale(3);
+}

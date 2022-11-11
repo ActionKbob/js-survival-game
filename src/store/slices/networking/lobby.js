@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit"
+import { LOBBY_STATES } from "@networking/enums";
 
 const initialState = {
-	key : null,
+	key : '',
 	clients : [],
-	readyState : 3,
-	isHost : false
+	status : LOBBY_STATES[3]
 }
 
 const lobbiesSlice = createSlice( {
@@ -12,15 +12,14 @@ const lobbiesSlice = createSlice( {
 	initialState,
 	reducers : {
 		joinLobby : ( state, action ) => {
-			state.readyState = 1;
 			state.key = action.payload.key;
+			state.status = LOBBY_STATES[1];
 			state.clients = action.payload.clients;
-			console.log(state.clients)
 			return state;
 		},
 		leaveLobby : ( state ) => {
-			state.readyState = 3;
-			state.key = null;
+			state.key = '';
+			state.status = LOBBY_STATES[3];
 			state.clients = [];
 			return state;
 		},

@@ -20,7 +20,7 @@ export default class PeerConnection
 		console.log(`Attempting peer connection ${this.clientId} -> ${this.peerId}`);
 	}
 
-	createDataChannel = ( name ) => {	
+	createDataChannel = ( name ) => {
 		console.log( `creating data channel ${name}` )
 		this.handleDataChannelCreation( this.connection.createDataChannel( name ) );	
 	}

@@ -10,6 +10,7 @@ const peersSlice = createSlice( {
 	reducers : {
 		addPeer : ( state, action ) => {
 			state.peers = [ ...state.peers, action.payload ];
+			console.log( state.peers );
 		},
 		removePeer : ( state, action ) => {
 			state.peers = state.peers.filter( ( peer ) => peer !== action.payload );
