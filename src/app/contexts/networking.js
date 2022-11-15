@@ -3,16 +3,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { socket, peerConnections, openSocket, closeSocket } from "@networking";
 import PeerConnection from '@networking/PeerConnection';
 import { SOCKET_STATES } from "@networking/enums";
-import { joinLobby, leaveLobby, addClient, removeClient } from "@store/slices/networking/lobby";
-import { addPeer, removePeer } from "@store/slices/networking/peers";
+import { joinLobby, leaveLobby, addClient, removeClient, setClientStatus } from "@store/slices/networking/lobby";
+// import { addPeer, removePeer } from "@store/slices/networking/peers";
+import { EventEmitter } from "@utilities";
 
 export const NetworkContext = createContext();
+
+const events = new EventEmitter();
 
 export const NetworkProvider = ( { children } ) => {
 	
 	const dispatch = useDispatch();
 	const { endpoint, status, clientId } = useSelector( state => state.websocket );
-	const { peers } = useSelector( state => state.peers );
+	// const { peers } = useSelector( state => state.peers );
 
 	useEffect( () => {
 
@@ -22,19 +25,6 @@ export const NetworkProvider = ( { children } ) => {
 		}
 
 	}, [ status, clientId ] );
-
-	// useEffect( () => {
-	// 	for( let i = 0; i < peers.length; i++ )
-	// 	{
-	// 		const peerId = peers[i];
-			
-	// 		if( peerConnections.has( peerId ) )
-	// 		{
-	// 			const peer = peerConnections.get( peerId );
-	// 			console.log( peer.channel );
-	// 		}
-	// 	}
-	// }, [ peers ] );
 
 	const connect = () => {
 		openSocket( endpoint, dispatch );
@@ -59,7 +49,7 @@ export const NetworkProvider = ( { children } ) => {
 					if( peerId === clientId )
 						continue;
 					
-					const peer = new PeerConnection( { socket, clientId, peerId, dispatch } );
+					const peer = new PeerConnection( { socket, clientId, peerId } );
 					peerConnections.set( peerId, peer );
 
 					attachPeer( peer );
@@ -93,7 +83,7 @@ export const NetworkProvider = ( { children } ) => {
 			case 'offer' :
 				if( !peerConnections.has( payload.origin ) )
 				{
-					const peer = new PeerConnection( { socket, clientId, peerId : payload.origin, dispatch } );
+					const peer = new PeerConnection( { socket, clientId, peerId : payload.origin } );
 					peerConnections.set( payload.origin, peer );
 
 					attachPeer( peer );
@@ -125,27 +115,37 @@ export const NetworkProvider = ( { children } ) => {
 	}
 
 	const handlePeerOpen = ( { peerId } ) => {
-		dispatch( addPeer( peerId ) );
+		dispatch( setClientStatus( { clientId : peerId, status : 1 } ) );
 	}
 
-	const handlePeerMessage = ( event ) => {
-		console.log( event );
+	const handlePeerMessage = ( data ) => {
+		const { type, payload, peerId } = data;
+
+		switch( type )
+		{
+			default :
+				events.emit( type, { payload, peerId } );
+				break;
+		}
+
 	}
 
 	const handlePeerClose = ( { peerId } ) => {
-		dispatch( removePeer( peerId ) );
+		dispatch( setClientStatus( { clientId : peerId, status : 3 } ) );
 	}
 
 	const broadcast = ( message ) => {
 		for( let [ peerId, peer ] of peerConnections )
 		{
 			console.log( 'sending message to', peer );
-			peer.channel.send( JSON.stringify( { payload : message } ) );
+			peer.channel.send( message );
 		}
 	}
 
 	return(
 		<NetworkContext.Provider value={ {
+			events,
+
 			connect,
 			disconnect,
 			broadcast

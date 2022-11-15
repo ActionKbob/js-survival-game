@@ -1,15 +1,16 @@
-import { socket } from "@networking";
 import { useDispatch, useSelector } from "react-redux";
-import { setKey } from "@store/slices/networking/lobby";
+import { useNetwork } from "@app_contexts/networking";
+import { socket } from "@networking";
 import { LOBBY_STATES } from "@networking/enums";
+import { setKey } from "@store/slices/networking/lobby";
 
 const LobbyPanel = () => {
-
+	
 	const dispatch = useDispatch();
 
 	const { clientId, status } = useSelector( state => state.websocket );
 	const { key, status : lobbyStatus, clients } = useSelector( state => state.lobby );
-	
+
 	const handleLobbyKeyChange = ( _event ) => {
 		dispatch( setKey( _event.target.value.toUpperCase() ) );
 	}
@@ -52,23 +53,36 @@ const LobbyPanel = () => {
 					{
 						lobbyStatus === LOBBY_STATES[1] &&
 						<div className="mt-3">
-							<span className="mb-2">Clients:</span>
-							<ul className="list-group">
-								{
-									clients.map( ( client, index ) => {
-
-										if( client !== clientId )
-										{
+							<div>
+								<div className="mb-2">Clients:</div>
+								<ul className="list-group">
+									{
+										clients.map( ( client, index ) => {
 											return(
-												<li className="d-flex justify-content-between align-items-center" key={ index }>
-													<span>{ client }</span>
-													<span className="text-warning p-2 border">Waiting</span>
+												<li className="d-flex justify-content-between align-items-center mb-1" key={ index }>
+													<span>
+														{ client.id }
+													</span>
+													{
+														client.id === clientId &&
+														<span>(You)</span>
+													}
+													{
+														(client.id !== clientId && client.status) === 0 ?
+														<span className="text-warning"><span className="spin material-symbols-outlined">sync</span></span> :
+														(client.id !== clientId && client.status) === 1 ?
+														<span className="text-success"><span className="material-symbols-outlined">check_circle</span></span> :
+														(client.id !== clientId && client.status) === 2 ?
+														<span className="text-warning">Disconnecting</span> :
+														(client.id !== clientId && client.status) === 3 &&
+														<span className="text-danger">Disconnected</span>
+													}
 												</li>
-											) ;
-										}
-									} )
-								}
-							</ul>
+											);
+										} )
+									}
+								</ul>
+							</div>
 						</div>
 					}
 				</div>

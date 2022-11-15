@@ -1,15 +1,13 @@
 import { ICE_SERVER_CONFIG } from ".";
-import { addPeer, removePeer } from "@store/slices/networking/peers";
 import { EventEmitter } from "@utilities";
 
 export default class PeerConnection
 {
-	constructor( { socket, clientId, peerId, dispatch } )
+	constructor( { socket, clientId, peerId } )
 	{
 		this.socket = socket;
 		this.clientId = clientId;
 		this.peerId = peerId;
-		this.dispatch = dispatch;
 
 		this.remoteDesciptionSet = false;
 		this.candidate = null;
@@ -73,7 +71,6 @@ export default class PeerConnection
 	
 	handleDataChannelCreation = ( channel ) => {
 		channel.onopen = () => {
-			this.dispatch( addPeer( this.peerId ) );
 			this.channel = channel;
 			this.events.emit( 'open', { peerId : this.peerId } );
 
@@ -82,8 +79,8 @@ export default class PeerConnection
 
 		channel.onmessage = ( e ) => {
 			console.log(e)
-			const { payload } = JSON.parse( e.data );
-			this.events.emit( 'message', payload );
+			const { type, payload } = JSON.parse( e.data );
+			this.events.emit( 'message', { type, payload, peerId : this.peerId } );
 		}
 
 		channel.onclose = () => {

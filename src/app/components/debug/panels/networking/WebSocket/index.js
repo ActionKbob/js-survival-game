@@ -43,11 +43,6 @@ const WebSocketPanel = () => {
 					</>
 				}
 			</div>
-			{
-				clientId &&
-				<div className="mt-2">Client ID: { clientId }</div>
-
-			}
 		</div>
 	);
 }

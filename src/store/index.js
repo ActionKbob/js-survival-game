@@ -5,8 +5,7 @@ import config from '@store/slices/config';
 import player from '@store/slices/player';
 import websocket from '@store/slices/networking/websocket';
 import lobby from '@store/slices/networking/lobby';
-import peers from '@store/slices/networking/peers';
-import messages from '@store/slices/networking/messages';
+import chat from '@store/slices/networking/chat';
 import debug from '@store/slices/debug';
 
 const store = configureStore( {
@@ -16,8 +15,7 @@ const store = configureStore( {
 		player,
 		websocket,
 		lobby,
-		peers,
-		messages,
+		chat,
 		debug
 	}
 } );
