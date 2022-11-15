@@ -1,6 +1,6 @@
 import { useEffect, createContext, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { socket, peerConnections, openSocket, closeSocket } from "@networking";
+import { socket, peerConnections, openSocket, closeSocket, broadcast } from "@networking";
 import PeerConnection from '@networking/PeerConnection';
 import { SOCKET_STATES } from "@networking/enums";
 import { joinLobby, leaveLobby, addClient, removeClient, setClientStatus } from "@store/slices/networking/lobby";
@@ -132,14 +132,6 @@ export const NetworkProvider = ( { children } ) => {
 
 	const handlePeerClose = ( { peerId } ) => {
 		dispatch( setClientStatus( { clientId : peerId, status : 3 } ) );
-	}
-
-	const broadcast = ( message ) => {
-		for( let [ peerId, peer ] of peerConnections )
-		{
-			console.log( 'sending message to', peer );
-			peer.channel.send( message );
-		}
 	}
 
 	return(

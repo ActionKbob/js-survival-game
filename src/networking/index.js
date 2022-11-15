@@ -76,3 +76,11 @@ export const closeSocket = () => {
 		socket.close();
 	}
 }
+
+export const broadcast = ( message ) => {
+	for( let [ peerId, peer ] of peerConnections )
+	{
+		console.log( 'sending message to', peer );
+		peer.channel.send( message );
+	}
+}
