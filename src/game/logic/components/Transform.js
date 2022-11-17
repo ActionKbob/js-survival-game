@@ -1,8 +1,11 @@
-import { defineComponent } from "bitecs";
+import { defineComponent, Types } from "bitecs";
 import { Vectorf32 } from "@game/structs";
 import componentMap from ".";
 
-export const Transform = defineComponent( Vectorf32 );
+export const Transform = defineComponent( {
+	x : Types.f32,
+	y : Types.f32
+} );
 
 componentMap.Transform = Transform;
 

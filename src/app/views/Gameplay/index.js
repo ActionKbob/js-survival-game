@@ -1,5 +1,9 @@
 import Phaser, { Game } from 'phaser';
 
+import { useNetwork } from "@app_contexts/networking";
+import Gameplay from '@game/scenes/Gameplay';
+import Preloader from '@game/scenes/Preloader';
+
 import '@styles/components/phaserGame.scss';
 import { useEffect, useRef } from 'react';
 
@@ -17,7 +21,7 @@ const phaserConfig = {
 		height : window.innerHeight,
 	},
 	
-	scene : [],
+	scene : [ Preloader, Gameplay ],
 	parent : "phaser-game"
 }
 
@@ -25,10 +29,12 @@ const GameplayView = () => {
 
 	const game = useRef( null );
 
+	const { events } = useNetwork();
+
 	useEffect( () => {
 		
 		game.current = new Game( phaserConfig );
-			
+		
 		return () => {
 
 			if( game.current !== undefined )
@@ -37,7 +43,7 @@ const GameplayView = () => {
 		}
 
 	}, [] );
-
+	
 	return(
 		<div>
 			<div id="phaser-game">

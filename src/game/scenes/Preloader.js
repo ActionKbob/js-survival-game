@@ -20,6 +20,6 @@ export default class Preloader extends Scene
 
 	create()
 	{
-		this.scene.start( 'Game' );
+		this.scene.start( 'Gameplay' );
 	}
 }

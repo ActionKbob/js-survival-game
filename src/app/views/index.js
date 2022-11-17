@@ -10,7 +10,7 @@ const Views = () => {
 		<Routes>
 			<Route path="/" element={ <Layout /> }>
 				<Route index element={ <SplashView /> } />
-				<Route path="game" element={ <GameplayView /> } />
+				<Route path="gameplay" element={ <GameplayView /> } />
 			</Route>
 		</Routes>
 	);

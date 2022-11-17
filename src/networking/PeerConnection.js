@@ -78,9 +78,15 @@ export default class PeerConnection
 		}
 
 		channel.onmessage = ( e ) => {
-			console.log(e)
-			const { type, payload } = JSON.parse( e.data );
-			this.events.emit( 'message', { type, payload, peerId : this.peerId } );
+			if( e.data instanceof ArrayBuffer )
+			{
+				this.events.emit( 'message', { type : 'gamestate_update', payload : e.data } );
+			}
+			else
+			{
+				const { type, payload } = JSON.parse( e.data );
+				this.events.emit( 'message', { type, payload, peerId : this.peerId } );	
+			}
 		}
 
 		channel.onclose = () => {

@@ -1,15 +1,11 @@
 import { useEffect, createContext, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { socket, peerConnections, openSocket, closeSocket, broadcast } from "@networking";
+import { socket, peerConnections, openSocket, closeSocket, broadcast, peerEvents } from "@networking";
 import PeerConnection from '@networking/PeerConnection';
 import { SOCKET_STATES } from "@networking/enums";
 import { joinLobby, leaveLobby, addClient, removeClient, setClientStatus } from "@store/slices/networking/lobby";
-// import { addPeer, removePeer } from "@store/slices/networking/peers";
-import { EventEmitter } from "@utilities";
 
 export const NetworkContext = createContext();
-
-const events = new EventEmitter();
 
 export const NetworkProvider = ( { children } ) => {
 	
@@ -119,15 +115,18 @@ export const NetworkProvider = ( { children } ) => {
 	}
 
 	const handlePeerMessage = ( data ) => {
-		const { type, payload, peerId } = data;
 
-		switch( type )
+		if( data instanceof Object )
 		{
-			default :
-				events.emit( type, { payload, peerId } );
+			const { type, payload, peerId } = data;
+			
+			switch( type )
+			{
+				default :
+				peerEvents.emit( type, { payload, peerId } );
 				break;
+			}
 		}
-
 	}
 
 	const handlePeerClose = ( { peerId } ) => {
@@ -136,7 +135,7 @@ export const NetworkProvider = ( { children } ) => {
 
 	return(
 		<NetworkContext.Provider value={ {
-			events,
+			peerEvents,
 
 			connect,
 			disconnect,

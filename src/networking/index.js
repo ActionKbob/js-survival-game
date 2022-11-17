@@ -2,6 +2,7 @@ import { batch } from "react-redux";
 import { setStatus, setClientId } from "@store/slices/networking/websocket";
 import { leaveLobby } from "@store/slices/networking/lobby";
 import { SOCKET_STATES } from "./enums";
+import { EventEmitter } from "@utilities";
 
 // Google's WebRTC ice server configuration
 export const ICE_SERVER_CONFIG = {
@@ -19,6 +20,7 @@ export const ICE_SERVER_CONFIG = {
 
 export var socket = null;
 export var peerConnections = null;
+export const peerEvents = new EventEmitter();
 
 export const openSocket = ( _endpoint, _dispatch ) => {
 	return new Promise( ( resolve, reject ) => {
@@ -78,9 +80,12 @@ export const closeSocket = () => {
 }
 
 export const broadcast = ( message ) => {
-	for( let [ peerId, peer ] of peerConnections )
-	{
-		console.log( 'sending message to', peer );
-		peer.channel.send( message );
+	if( peerConnections && peerConnections.size > 0)
+	{	
+		for( let [ peerId, peer ] of peerConnections )
+		{
+			// console.log( 'sending message to', peer );
+			peer.channel.send( message );
+		}
 	}
 }

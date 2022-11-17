@@ -16,7 +16,7 @@ const ChatPanel = () => {
 	const { clientId } = useSelector( state => state.websocket );
 	const { clients } = useSelector( ( state ) => state.lobby );
 	const { messages } = useSelector( ( state ) => state.chat );
-	const { events, broadcast } = useNetwork();
+	const { peerEvents, broadcast } = useNetwork();
 
 	const enterToggle = useKeyPress( "Enter" );
 	const escToggle = useKeyPress( "Escape" );
@@ -24,12 +24,12 @@ const ChatPanel = () => {
 	const [ active, setActive ] = useState( false );
 	
 	useEffect( () => {
-		events.attach( 'chat', handleReceiveMessage )
+		peerEvents.attach( 'chat', handleReceiveMessage )
 
 		return () => {
-			events.detach( 'chat', handleReceiveMessage )
+			peerEvents.detach( 'chat', handleReceiveMessage )
 		}
-	}, [ clientId, clients, events ] );
+	}, [ clientId, clients, peerEvents ] );
 	
 	useEffect( () => {
 		if( enterToggle && !active )
