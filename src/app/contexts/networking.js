@@ -11,7 +11,6 @@ export const NetworkProvider = ( { children } ) => {
 	
 	const dispatch = useDispatch();
 	const { endpoint, status, clientId } = useSelector( state => state.websocket );
-	// const { peers } = useSelector( state => state.peers );
 
 	useEffect( () => {
 

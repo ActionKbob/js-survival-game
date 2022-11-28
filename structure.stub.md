@@ -2,9 +2,8 @@
 
 - ## app
 	- ### contexts
-	- ### routes
 	- ### components
-		- #### views
+	- ### views
 - ## assets
 - ## game
 	- ### configs
